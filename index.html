@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ফায়ারবেস ডাটা আপলোডার</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0f172a; color: white; text-align: center; padding: 40px 20px; }
+        .box { background: rgba(255, 255, 255, 0.1); padding: 30px; border-radius: 15px; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        input[type="file"] { margin: 20px 0; padding: 10px; background: #1e293b; border-radius: 5px; width: 80%; }
+        button { background: #2563eb; color: white; border: none; padding: 12px 30px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; width: 85%; }
+        button:disabled { background: #64748b; cursor: not-allowed; }
+        #status { margin-top: 20px; font-weight: bold; font-size: 15px; color: #facc15; text-align: left; max-height: 200px; overflow-y: auto; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>🩸 ডাটাবেজ ইম্পোর্ট প্যানেল (RoktoLagbeBD)</h2>
+    <p>আপনার রিকভার করা <b>data.txt</b> বা <b>data.json</b> ফাইলটি এখানে সিলেক্ট করুন।</p>
+    
+    <input type="file" id="jsonFileInput" accept=".json, .txt">
+    <br>
+    <button id="uploadBtn" onclick="startUpload()">ফায়ারবেসে আপলোড শুরু করুন</button>
+
+    <div id="status">অপেক্ষা করা হচ্ছে... ফাইল সিলেক্ট করুন।</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
+<script>
+    // 🎯 আপনার দেওয়া আসল ফায়ারবেস কনফিগারেশন
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUlcAtzmJLwZmCCdliL3n9oePKXrUZodc",
+      authDomain: "roktolagbebd.firebaseapp.com",
+      projectId: "roktolagbebd",
+      storageBucket: "roktolagbebd.firebasestorage.app",
+      messagingSenderId: "612218868571",
+      appId: "1:612218868571:web:b369863ac82d4d0ad9407e",
+      measurementId: "G-W543L13Z7Y"
+    };
+    
+    // ফায়ারবেস ইনিশিয়ালাইজ
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    function logStatus(message) {
+        const statusDiv = document.getElementById("status");
+        statusDiv.innerHTML += `<div>${message}</div>`;
+        statusDiv.scrollTop = statusDiv.scrollHeight;
+    }
+
+    async function startUpload() {
+        const fileInput = document.getElementById("jsonFileInput");
+        const uploadBtn = document.getElementById("uploadBtn");
+        const statusDiv = document.getElementById("status");
+
+        if (fileInput.files.length === 0) {
+            alert("দয়া করে প্রথমে আপনার ফাইলটি সিলেক্ট করুন!");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        uploadBtn.disabled = true;
+        statusDiv.innerHTML = "";
+        logStatus("🔄 ফাইল রিড করা হচ্ছে...");
+
+        reader.onload = async function(e) {
+            try {
+                const donorsList = JSON.parse(e.target.result);
+                
+                if (!Array.isArray(donorsList)) {
+                    throw new Error("ফাইল ফরম্যাট সঠিক নয়। এটি একটি JSON Array হতে হবে।");
+                }
+
+                const totalDonors = donorsList.length;
+                logStatus(`✅ ফাইল রিড সফল! মোট ${totalDonors} জন রক্তদাতার ডাটা পাওয়া গেছে।`);
+                logStatus("⏳ ফায়ারবেসে আপলোড শুরু হচ্ছে... ব্রাউজার বা ফোন বন্ধ করবেন না।");
+
+                let batch = db.batch();
+                let count = 0;
+
+                for (const donor of donorsList) {
+                    const donorRef = db.collection("donors").doc(); // অটো জেনারেটেড আইডি
+                    
+                    // ডাটাবেজের ফিল্ডগুলো স্ট্যান্ডার্ড ফরমেটে সাজানো হচ্ছে
+                    batch.set(donorRef, {
+                        name: donor.name || "অজানা",
+                        bloodGroup: (donor.bloodGroup || "").toUpperCase().trim(),
+                        mobile: donor.mobile || "",
+                        district: (donor.district || "").toLowerCase().trim(),
+                        address: donor.address || "",
+                        age: donor.age || "অজানা",
+                        occupation: donor.occupation || "অজানা",
+                        lastDonationDate: donor.lastDonationDate || "",
+                        registrationDate: donor.registrationDate || new Date().toISOString(),
+                        status: "Verified" // আগের সব ইউজারকে সরাসরি ভেরিফাইড করা হচ্ছে
+                    });
+
+                    count++;
+
+                    // ফায়ারবেস ব্যাচ লিমিট ৫০০, তাই ৫০০ পর পর কমিট হবে
+                    if (count % 500 === 0) {
+                        await batch.commit();
+                        logStatus(`🚀 ${count} টি ডাটা ফায়ারবেসে সফলভাবে আপলোড হয়েছে...`);
+                        batch = db.batch(); 
+                    }
+                }
+
+                if (count % 500 !== 0) {
+                    await batch.commit();
+                }
+
+                logStatus(`🎉 <b>অভিনন্দন ওমর!</b> মোট ${count} জন রক্তদাতার ডাটা 'roktolagbebd' প্রজেক্টে আপলোড সম্পন্ন হয়েছে।`);
+                uploadBtn.disabled = false;
+
+            } catch (error) {
+                logStatus(`❌ ভুল হয়েছে: ${error.message}`);
+                uploadBtn.disabled = false;
+            }
+        };
+
+        reader.readAsText(file);
+    }
+</script>
+
+</body>
+</html>
