@@ -43,7 +43,7 @@
             color: #0f172a;
         }
         body.light .admin-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.9);
             border-color: rgba(226, 232, 240, 1);
             color: #0f172a;
         }
@@ -58,58 +58,79 @@
 <body class="bg-slate-950 text-slate-100 transition-colors duration-300 min-h-screen flex flex-col font-sans">
 
     <!-- Firebase Google Login Secure Gate (Security First) -->
-    <div id="securityGate" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4">
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-sm w-full text-center space-y-5 shadow-2xl">
+    <div id="securityGate" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-sm w-full text-center space-y-5 shadow-2xl my-auto">
             <div class="bg-rose-500/10 text-brand-primary p-4 rounded-full inline-block animate-pulse">
                 <i class="fa-solid fa-shield-halved text-3xl"></i>
             </div>
             <div class="space-y-1">
-                <h2 class="text-xl font-bold">অ্যাডমিন লগইন পোর্টাল</h2>
-                <p class="text-xs text-slate-400">এই কন্ট্রোল প্যানেলে প্রবেশ করতে শুধুমাত্র অনুমোদিত ইমেইল দিয়ে গুগল লগইন করুন।</p>
+                <h2 class="text-xl font-bold text-white">অ্যাডমিন লগইন পোর্টাল</h2>
+                <p class="text-xs text-slate-400">এই কন্ট্রোল প্যানেলে প্রবেশ করতে অনুগ্রহ করে যাচাইকরণ সম্পন্ন করুন।</p>
             </div>
             
-            <div class="space-y-3">
-                <!-- Google Login Button -->
-                <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-md">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" alt="Google Logo" class="w-4.5 h-4.5">
+            <!-- Login Method Tabs -->
+            <div class="flex border-b border-slate-800 text-xs">
+                <button onclick="switchLoginTab('google')" id="tabBtnGoogle" class="flex-1 pb-2 border-b-2 border-brand-primary font-bold text-white">গুগল লগইন</button>
+                <button onclick="switchLoginTab('passcode')" id="tabBtnPasscode" class="flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-white">পাসকোড লগইন</button>
+            </div>
+
+            <!-- Google Login Tab Content -->
+            <div id="googleLoginArea" class="space-y-3 py-2">
+                <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center gap-2.5 shadow-md active:scale-[0.98]">
+                    <!-- Standard Official Google SVG Logo (Crisp and reliable size) -->
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                    </svg>
                     Sign in with Google
                 </button>
             </div>
-            <p id="securityError" class="text-xs text-brand-primary font-bold hidden bg-rose-500/10 border border-rose-500/20 py-2 rounded-xl">ভুল ইমেইল! এই ইমেইল দিয়ে প্রবেশ করা সম্পূর্ণ নিষিদ্ধ।</p>
+
+            <!-- Passcode Login Tab Content (Fallback alternative) -->
+            <div id="passcodeLoginArea" class="space-y-3 py-2 hidden">
+                <input type="password" id="adminPasscodeField" placeholder="সিক্রেট পাসকোড লিখুন" class="w-full bg-slate-950 border border-slate-850 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-brand-primary text-center tracking-widest text-white">
+                <button onclick="verifyAdminPasscode()" class="w-full bg-brand-primary hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-[0.98]">
+                    পাসকোড ভেরিফাই করুন
+                </button>
+            </div>
+
+            <p id="securityError" class="text-xs text-brand-primary font-bold hidden bg-rose-500/10 border border-rose-500/20 py-2 rounded-xl">ভুল ক্রেডেনশিয়াল! প্রবেশ সম্পূর্ণ নিষিদ্ধ।</p>
         </div>
     </div>
 
     <!-- Main Navigation Header -->
     <header class="border-b border-slate-900 bg-slate-900/50 backdrop-blur sticky top-0 z-40 py-3.5 px-4">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div class="flex items-center gap-3">
-                <div class="bg-brand-primary text-white p-2 rounded-xl">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="bg-brand-primary text-white p-2.5 rounded-xl">
                     <i class="fa-solid fa-users-gear text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-md md:text-lg font-bold text-white">ইমারজেন্সি রক্ত লাগবে? - কন্ট্রোল প্যানেল</h1>
-                    <p class="text-[10px] text-slate-400">লগইন ইমেইল: <span id="currentAdminEmail" class="font-semibold text-rose-500">...</span></p>
+                    <h1 class="text-sm md:text-lg font-bold text-white leading-snug">ইমারজেন্সি রক্ত লাগবে? - কন্ট্রোল প্যানেল</h1>
+                    <p class="text-[10px] text-slate-400">লগইন ইমেইল/আইডি: <span id="currentAdminEmail" class="font-semibold text-rose-500">...</span></p>
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-end">
                 <!-- Theme Switcher -->
-                <button id="themeToggleBtn" class="bg-slate-900 border border-slate-800 hover:border-slate-700 p-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition">
+                <button id="themeToggleBtn" class="bg-slate-900 border border-slate-800 hover:border-slate-700 p-2.5 rounded-lg text-xs flex items-center justify-center transition" title="থিম পরিবর্তন">
                     <i id="themeToggleIcon" class="fa-solid fa-sun text-amber-400"></i>
                 </button>
                 
                 <!-- Sync Counter Tool -->
-                <button onclick="syncGlobalCounter()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3.5 py-2 rounded-lg text-xs flex items-center gap-1.5 shadow-md transition">
-                    <i class="fa-solid fa-rotate"></i> লাইভ কাউন্টার সিঙ্ক (Sync)
+                <button onclick="syncGlobalCounter()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-2.5 rounded-lg text-[11px] flex items-center gap-1.5 shadow-md transition">
+                    <i class="fa-solid fa-rotate"></i> কাউন্টার সিঙ্ক (Sync)
                 </button>
 
                 <!-- Add New Donor Button -->
-                <button onclick="openAddDonorModal()" class="bg-brand-success hover:bg-emerald-600 text-white font-bold px-3.5 py-2 rounded-lg text-xs flex items-center gap-1.5 transition">
-                    <i class="fa-solid fa-user-plus"></i> নতুন ডোনার যোগ করুন
+                <button onclick="openAddDonorModal()" class="bg-brand-success hover:bg-emerald-600 text-white font-bold px-3 py-2.5 rounded-lg text-[11px] flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-user-plus"></i> ডোনার যোগ
                 </button>
 
                 <!-- Secure Logout Button -->
-                <button onclick="logoutAdmin()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-lg text-xs transition flex items-center gap-1.5 font-bold">
+                <button onclick="logoutAdmin()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2.5 rounded-lg text-[11px] transition flex items-center gap-1.5 font-bold">
                     <i class="fa-solid fa-right-from-bracket text-brand-primary"></i> লগআউট
                 </button>
             </div>
@@ -137,7 +158,7 @@
             <div class="admin-card p-4 rounded-2xl flex items-center justify-between">
                 <div class="space-y-1">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">মোট কুয়েরি সীমা</span>
-                    <p class="text-xs text-slate-400">অন-ডিমান্ড কুয়েরি সক্রিয় আছে</p>
+                    <p class="text-xs text-slate-400">অন-ডিমান্ড কুয়েরি সক্রিয়</p>
                 </div>
                 <div class="bg-blue-500/10 text-blue-500 p-3 rounded-full"><i class="fa-solid fa-database text-xl"></i></div>
             </div>
@@ -146,20 +167,20 @@
         <!-- Advanced Admin Filter Search Area -->
         <section class="admin-card p-5 rounded-3xl shadow-xl space-y-4">
             <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                <h3 class="text-sm md:text-md font-bold flex items-center gap-2">
-                    <i class="fa-solid fa-filter text-brand-primary"></i>  রক্তদাতা ফিল্টারিং এবং সার্চ ইঞ্জিন
+                <h3 class="text-xs md:text-sm font-bold flex items-center gap-2 text-white">
+                    <i class="fa-solid fa-filter text-brand-primary"></i> রক্তদাতা ফিল্টারিং এবং সার্চ ইঞ্জিন
                 </h3>
                 <!-- Database Backup Button -->
-                <button onclick="backupCurrentSearch()" id="backupBtn" class="hidden text-xs font-semibold text-brand-success hover:underline flex items-center gap-1">
+                <button onclick="backupCurrentSearch()" id="backupBtn" class="hidden text-[11px] font-semibold text-brand-success hover:underline flex items-center gap-1">
                     <i class="fa-solid fa-download"></i> ডাটাবেজ ব্যাকআপ (JSON)
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs text-slate-200">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 text-xs text-slate-200">
                 
                 <div class="space-y-1">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">রক্তের গ্রুপ</label>
-                    <select id="filterBlood" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
+                    <select id="filterBlood" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
                         <option value="">গ্রুপ সিলেক্ট করুন</option>
                         <option value="A+">A+</option>
                         <option value="A-">A-</option>
@@ -174,26 +195,26 @@
 
                 <div class="space-y-1">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">বিভাগ</label>
-                    <select id="filterDivision" onchange="handleFilterDivisionChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
+                    <select id="filterDivision" onchange="handleFilterDivisionChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
                         <option value="">বিভাগ</option>
                     </select>
                 </div>
 
                 <div class="space-y-1">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">জেলা</label>
-                    <select id="filterDistrict" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer disabled:opacity-50">
+                    <select id="filterDistrict" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer disabled:opacity-50">
                         <option value="">জেলা</option>
                     </select>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">মোবাইল নম্বর (সরাসরি সার্চ)</label>
-                    <input type="tel" id="filterMobile" placeholder="যেমন: 01700000000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">মোবাইল নম্বর (সার্চ)</label>
+                    <input type="tel" id="filterMobile" placeholder="যেমন: 01700000000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
                 </div>
 
                 <div class="space-y-1">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">ভেরিফিকেশন স্ট্যাটাস</label>
-                    <select id="filterStatus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
+                    <select id="filterStatus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
                         <option value="Verified">Verified (ভেরিফাইড)</option>
                         <option value="Pending">Pending (পেন্ডিং)</option>
                     </select>
@@ -201,17 +222,17 @@
 
             </div>
 
-            <div class="flex justify-center">
-                <button onclick="executeAdminSearch()" class="bg-brand-primary hover:bg-rose-700 text-white font-bold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition">
+            <div class="flex justify-center pt-2">
+                <button onclick="executeAdminSearch()" class="bg-brand-primary hover:bg-rose-700 text-white font-bold px-8 py-3 rounded-xl text-xs flex items-center gap-2 transition active:scale-[0.98] w-full sm:w-auto justify-center">
                     <i class="fa-solid fa-magnifying-glass"></i> সার্চ শুরু করুন
                 </button>
             </div>
         </section>
 
         <!-- Search Results Grid Panel -->
-        <section class="space-y-3">
-            <h3 class="text-sm md:text-base font-bold flex items-center gap-2">
-                <i class="fa-solid fa-list-check text-brand-primary"></i> রক্তদাতা ডাটাবেজ তালিকা (<span id="resultsCount">০</span> জন লোড হয়েছে)
+        <section class="space-y-3.5">
+            <h3 class="text-xs md:text-sm font-bold flex items-center gap-2 text-white">
+                <i class="fa-solid fa-list-check text-brand-primary"></i> রক্তদাতা ডাটাবেজ তালিকা (<span id="resultsCount" class="text-brand-success">০</span> জন লোড হয়েছে)
             </h3>
 
             <div id="loadingSpinner" class="hidden flex flex-col items-center justify-center py-12 space-y-2">
@@ -221,7 +242,7 @@
 
             <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="col-span-full admin-card p-8 rounded-2xl text-center text-slate-400 text-xs">
-                    <i class="fa-solid fa-magnifying-glass text-3xl mb-2 block text-slate-600"></i>
+                    <i class="fa-solid fa-magnifying-glass text-3xl mb-2.5 block text-slate-600"></i>
                     কোনো ডাটা খোঁজা হয়নি। ওপরে রক্তের গ্রুপ, জেলা বা মোবাইল নম্বর দিয়ে সার্চ করুন।
                 </div>
             </div>
@@ -230,13 +251,13 @@
     </main>
 
     <!-- SYSTEM MODAL 1: Edit Donor Details -->
-    <div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm hidden">
-        <div class="bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-850 overflow-hidden transform scale-95 transition-all duration-300 max-h-[90vh] flex flex-col">
+    <div id="editModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm hidden overflow-y-auto">
+        <div class="bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-850 overflow-hidden transform scale-95 transition-all duration-300 max-h-[90vh] flex flex-col my-auto">
             <div class="bg-brand-primary text-white p-4 flex items-center justify-between">
-                <h3 class="text-sm font-bold flex items-center gap-2">
+                <h3 class="text-xs font-bold flex items-center gap-2">
                     <i class="fa-solid fa-user-pen"></i> রক্তদাতার তথ্য পরিবর্তন করুন
                 </h3>
-                <button onclick="closeEditModal()" class="text-white hover:text-white/80 transition"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeEditModal()" class="text-white hover:text-white/80 transition p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             
             <input type="hidden" id="editDocId">
@@ -244,18 +265,18 @@
             <div class="p-5 overflow-y-auto space-y-3.5 flex-grow text-xs text-slate-100">
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-400">নাম</label>
-                    <input type="text" id="editName" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white">
+                    <input type="text" id="editName" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
                 </div>
                 
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-400">মোবাইল নম্বর (ইংরেজিতে)</label>
-                    <input type="tel" id="editMobile" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white">
+                    <input type="tel" id="editMobile" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">রক্তের গ্রুপ</label>
-                        <select id="editBlood" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
+                        <select id="editBlood" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
                             <option value="A+">A+</option>
                             <option value="A-">A-</option>
                             <option value="B+">B+</option>
@@ -268,23 +289,23 @@
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">বয়স</label>
-                        <input type="text" id="editAge" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white">
+                        <input type="text" id="editAge" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
                     </div>
                 </div>
 
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-400">ঠিকানা / এলাকা / জেলা</label>
-                    <input type="text" id="editAddress" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white">
+                    <input type="text" id="editAddress" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">পেশা</label>
-                        <input type="text" id="editOccupation" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white">
+                        <input type="text" id="editOccupation" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">ভেরিফিকেশন স্ট্যাটাস</label>
-                        <select id="editStatus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
+                        <select id="editStatus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
                             <option value="Verified">Verified</option>
                             <option value="Pending">Pending</option>
                         </select>
@@ -293,42 +314,42 @@
 
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-400">সর্বশেষ রক্তদানের তারিখ</label>
-                    <input type="date" id="editLastDate" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-primary text-white">
+                    <input type="date" id="editLastDate" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
                 </div>
             </div>
 
             <div class="bg-slate-950 p-4 border-t border-slate-850 flex gap-2">
-                <button onclick="closeEditModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 rounded-xl transition text-xs">বাতিল</button>
-                <button onclick="saveDonorChanges()" class="flex-1 bg-brand-primary hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl transition text-xs">তথ্য সেভ করুন</button>
+                <button onclick="closeEditModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl transition text-xs">বাতিল</button>
+                <button onclick="saveDonorChanges()" class="flex-1 bg-brand-primary hover:bg-rose-700 text-white font-bold py-3 rounded-xl transition text-xs">তথ্য সেভ করুন</button>
             </div>
         </div>
     </div>
 
     <!-- SYSTEM MODAL 2: Add New Donor -->
-    <div id="addModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm hidden">
-        <div class="bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-850 overflow-hidden transform scale-95 transition-all duration-300 max-h-[90vh] flex flex-col">
+    <div id="addModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm hidden overflow-y-auto">
+        <div class="bg-slate-900 rounded-3xl w-full max-w-lg shadow-2xl border border-slate-850 overflow-hidden transform scale-95 transition-all duration-300 max-h-[90vh] flex flex-col my-auto">
             <div class="bg-brand-success text-white p-4 flex items-center justify-between">
-                <h3 class="text-sm font-bold flex items-center gap-2">
+                <h3 class="text-xs font-bold flex items-center gap-2">
                     <i class="fa-solid fa-user-plus"></i> নতুন রক্তদাতা সরাসরি যুক্ত করুন
                 </h3>
-                <button onclick="closeAddDonorModal()" class="text-white hover:text-white/80 transition"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeAddDonorModal()" class="text-white hover:text-white/80 transition p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
 
             <div class="p-5 overflow-y-auto space-y-3.5 flex-grow text-xs text-slate-100">
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-400">পুরো নাম</label>
-                    <input type="text" id="addName" placeholder="যেমন: মো. সাব্বির হোসেন" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white">
+                    <input type="text" id="addName" placeholder="যেমন: মো. সাব্বির হোসেন" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white">
                 </div>
                 
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-400">মোবাইল নম্বর (ইংরেজিতে ১১ ডিজিট)</label>
-                    <input type="tel" id="addMobile" placeholder="যেমন: 01700000000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white">
+                    <input type="tel" id="addMobile" placeholder="যেমন: 01700000000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">রক্তের গ্রুপ</label>
-                        <select id="addBlood" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white cursor-pointer">
+                        <select id="addBlood" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white cursor-pointer">
                             <option value="">গ্রুপ সিলেক্ট করুন</option>
                             <option value="A+">A+</option>
                             <option value="A-">A-</option>
@@ -342,7 +363,7 @@
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">বয়স</label>
-                        <input type="text" id="addAge" placeholder="যেমন: ২৬" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white">
+                        <input type="text" id="addAge" placeholder="যেমন: ২৬" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white">
                     </div>
                 </div>
 
@@ -350,19 +371,19 @@
                 <div class="grid grid-cols-3 gap-2">
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">বিভাগ</label>
-                        <select id="addDivision" onchange="handleAddDivisionChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white cursor-pointer">
+                        <select id="addDivision" onchange="handleAddDivisionChange()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white cursor-pointer">
                             <option value="">বিভাগ</option>
                         </select>
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">জেলা</label>
-                        <select id="addDistrict" onchange="handleAddDistrictChange()" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white cursor-pointer disabled:opacity-50">
+                        <select id="addDistrict" onchange="handleAddDistrictChange()" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white cursor-pointer disabled:opacity-50">
                             <option value="">জেলা</option>
                         </select>
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">উপজেলা</label>
-                        <select id="addUpazila" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white cursor-pointer disabled:opacity-50">
+                        <select id="addUpazila" disabled class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white cursor-pointer disabled:opacity-50">
                             <option value="">উপজেলা</option>
                         </select>
                     </div>
@@ -371,25 +392,25 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">পেশা</label>
-                        <input type="text" id="addOccupation" placeholder="যেমন: চাকুরীজীবী" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white">
+                        <input type="text" id="addOccupation" placeholder="যেমন: চাকুরীজীবী" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white">
                     </div>
                     <div class="space-y-1">
                         <label class="block font-bold text-slate-400">সর্বশেষ রক্তদানের তারিখ</label>
-                        <input type="date" id="addLastDate" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 outline-none focus:ring-2 focus:ring-brand-success text-white">
+                        <input type="date" id="addLastDate" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white">
                     </div>
                 </div>
             </div>
 
             <div class="bg-slate-950 p-4 border-t border-slate-850 flex gap-2">
-                <button onclick="closeAddDonorModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-2.5 rounded-xl transition text-xs">বাতিল</button>
-                <button onclick="addNewDonorSubmit()" class="flex-1 bg-brand-success hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl transition text-xs">ডাটাবেজে যুক্ত করুন</button>
+                <button onclick="closeAddDonorModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl transition text-xs">বাতিল</button>
+                <button onclick="addNewDonorSubmit()" class="flex-1 bg-brand-success hover:bg-emerald-600 text-white font-bold py-3 rounded-xl transition text-xs">ডাটাবেজে যুক্ত করুন</button>
             </div>
         </div>
     </div>
 
     <!-- SYSTEM MODAL 3: Delete Confirmation -->
-    <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 text-xs">
+    <div id="deleteModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm hidden overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 text-xs my-auto">
             <div class="bg-red-500/10 text-brand-primary p-3 rounded-full inline-block">
                 <i class="fa-solid fa-trash-can text-2xl"></i>
             </div>
@@ -404,9 +425,9 @@
     </div>
 
     <!-- Adaptive Global Notification Toast -->
-    <div id="alertToast" class="fixed bottom-4 right-4 z-50 max-w-xs w-full bg-slate-900 border border-slate-800 rounded-xl p-3 shadow-2xl transform translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-2 text-xs">
+    <div id="alertToast" class="fixed bottom-4 right-4 z-50 max-w-xs w-full bg-slate-900 border border-slate-800 rounded-xl p-3.5 shadow-2xl transform translate-y-24 opacity-0 transition-all duration-300 flex items-center gap-2.5 text-xs">
         <i id="toastIcon" class="fa-solid fa-circle-check text-brand-success text-base"></i>
-        <span id="toastMsg" class="font-medium">অপারেশন সফল হয়েছে!</span>
+        <span id="toastMsg" class="font-medium text-white">অপারেশন সফল হয়েছে!</span>
     </div>
 
     <!-- Firebase SDK core compat models -->
@@ -425,16 +446,16 @@
                 "নরসিংদী": ["নরসিংদী সদর", "বেলাবো", "মনোহরদী", "পলাশ", "রায়পুরা", "শিবপুর"],
                 "টাঙ্গাইল": ["টাঙ্গাইল সদর", "মির্জাপুর", "কালিহাতী", "घाटাইল", "দেলদুয়ার", "গোপালপুর", "বাসাইল", "ভূঞাপুর", "মধুপুর", "নাগরপুর", "সখিপুর", "ধনবাড়ী"],
                 "মানিকগঞ্জ": ["মানিকগঞ্জ সদর", "সিংগাইর", "শিবালয়", "ঘিওর", "হরিরামপুর", "দৌলতপুর", "সাটুরিয়া"],
-                "মুन्সিগঞ্জ": ["মুন্সিগঞ্জ সদর", "শ্রীনগর", "সিরাজদিখান", "লৌহজং", "গজারিয়া", "টংগিবাড়ী"],
-                "ফরিদপুর": ["ফরিদপুর সদর", "বোয়ালমারী", "আলফাডাঙ্গা", "মধুখালী", "ভাঙ্গা", "চরভদ্রাসন", "সদরপুর", "সালথা", "নগরকান্দা"],
+                "মুন্সিগঞ্জ": ["মুন্সিগঞ্জ সদর", "শ্রীনগর", "সিরাজদিখান", "লৌহজং", "গজারিয়া", "টংগিবাড়ী"],
+                "ফরিদপুর": ["ফরিদপুর সদর", "বোয়ালমারী", "আলফাডাঙ্গা", "মধুখালী", "ভাঙ্গা", "চরভদ্রাসন", "সদরপুর", "সালथा", "নগরকান্দা"],
                 "রাজবাড়ী": ["রাজবাড়ী সদর", "গোয়ালন্দ", "পাংশা", "বালিয়াকান্দি", "কালুখালী"],
                 "গোপালগঞ্জ": ["গোপালগঞ্জ সদর", "টুঙ্গিপাড়া", "কোটালীপাড়া", "কাশিয়ানী", "মুকসুদপুর"],
-                "مাদারীপুর": ["مাদারীপুর সদর", "শিবচর", "কালকিনি", "রাজৈর"],
+                "মাদারীপুর": ["মাদারীপুর সদর", "শিবচর", "কালকিনি", "রাজৈর"],
                 "শরীয়তপুর": ["শরীয়তপুর সদর", "ডামুড্যা", "নড়িয়া", "জাজিরা", "ভেদরগঞ্জ", "গোসাইরহাট"],
                 "কিশোরগঞ্জ": ["কিশোরগঞ্জ সদর", "কটিয়াদী", "ভৈরব", "বাজিতপুর", "নিকলী", "করিমগঞ্জ", "হোসেনপুর", "তাড়াইল", "পাকুন্দিয়া", "মিঠামইন", "ইটনা", "অষ্টগ্রাম", "কুলিয়ারচর"]
             },
             "চট্টগ্রাম": {
-                "চট্টগ্রাম": ["চট্টগ্রাম সিটি কর্পোরেশন", "হাটহাজারী", "পটিয়া", "সন্দ্বীপ", "রাঙ্গুনিয়া", "রাউজান", "বোয়ালখালী", "আনোয়ারা", "চন্দনাইশ", "বাঁশখালী", "সাতকানিয়া", "লোহাগাড়া", "ফটিকছড়ি", "মীরসরাই", "সীতাকুণ্ড"],
+                "চট্টগ্রাম": ["চট্টগ্রাম সিটি কর্পোরেশন", "হাটহাজারী", "পটিয়া", "সন্দ্বীপ", "রাঙ্গুনিয়া", "রাউজান", "বোয়ালখালী", "আনোয়ারা", "চন্দনাইশ", "বাঁশখালী", "সাতকানিিয়া", "লোহাগাড়া", "ফটিকছড়ি", "মীরসরাই", "সীতাকুণ্ড"],
                 "কক্সবাজার": ["কক্সবাজার সদর", "চকরিয়া", "মহেশখালী", "টেকনাফ", "উখিয়া", "পেকুয়া", "কুতুবদিয়া", "রামু"],
                 "কুমিল্লা": ["কুমিল্লা আদর্শ সদর", "কুমিল্লা সদর দক্ষিণ", "চৌদ্দগ্রাম", "লাকসাম", "লাঙ্গলকোট", "বরুড়া", "দাউদকান্দি", "চান্দিনা", "দেবিদ্বার", "মুরাদনগর", "বুড়িচং", "ব্রাহ্মণপাড়া", "হোমনা", "মেঘনা", "তিতাস", "মনোহরগঞ্জ"],
                 "ফেনী": ["ফেনী সদর", "ছাগলনাইয়া", "দাগনভূঞা", "সোনাগাজী", "পরশুরাম", "ফুলগাজী"],
@@ -444,11 +465,11 @@
                 "ব্রাহ্মণবাড়িয়া": ["ব্রাহ্মণবাড়িয়া সদর", "আশুগঞ্জ", "সরাইল", "নাসিরনগর", "বাঞ্ছারামপুর", "নবীনগর", "কসবা", "আখাউড়া", "বিজয়নগর"],
                 "রাঙ্গামাটি": ["রাঙ্গামাটি সদর", "কাপ্তাই", "কাউখালী", "বাঘাইছড়ি", "লংগদু", "নানিয়ারচর", "রাজস্থলী", "জুরাছড়ি", "বিলাইছড়ি", "বরকল"],
                 "বান্দরবান": ["বান্দরবান সদর", "রুমা", "থানচি", "রোয়াংছড়ি", "লামা", "আলীকদম", "নাইক্ষ্যংছড়ি"],
-                "খাগড়াছড়ি": ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মাটিরাঙ্গা", "মহালছড়ি", "মানিকছড়ি", "রামগড়", "গুইমারা", "লক্ষ্মীছড়ি"]
+                "খাগড়াছড়ি": ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মাটিরাঙ্গা", "মহালছড়ি", "মানিকছড়ি", "রামগড়", "গুইমারা", "লক্ষ্মীছড়ি"]
             },
             "রাজশাহী": {
                 "রাজশাহী": ["রাজশাহী সিটি কর্পোরেশন", "পবা", "গোদাগাড়ী", "তানোর", "বাঘা", "চারঘাট", "দুর্গাপুর", "মোহনপুর", "পুঠিয়া", "বাগমারা"],
-                "বগুড়া": ["বগুড়া সদর", "শেরপুর", "শিবগঞ্জ", "ধুনট", "নন্দীগ্রাম", "সারিয়াকান্দি", "গাবতলী", "কাহালু", "আदमদীঘি", "দুপচাচিয়া", "সোনাতলা", "শাজাহানপুর"],
+                "বগুড়া": ["বগুড়া সদর", "শেরপুর", "শিবগঞ্জ", "ধুনট", "নন্দীগ্রাম", "সারিয়াকান্দি", "গাবতলী", "কাহালু", "আদমদীঘি", "দুপচাচিয়া", "সোনাতলা", "শাজাহানপুর"],
                 "জয়পুরহাট": ["জয়পুরহাট সদর", "পাঁচবিবি", "কালাই", "ক্ষেতলাল", "আক্কেলপুর"],
                 "নওগাঁ": ["নওগাঁ সদর", "মহাদেবপুর", "বدلগাছী", "পত্নীতলা", "ধামইরহাট", "সাপাহার", "পোরশা", "নিয়ামতপুর", "মান্দা", "আত্রাই", "রানীনগর"],
                 "নাটোর": ["নাটোর সদর", "সিংড়া", "বাগাতিপাড়া", "লালপুর", "বড়াইগ্রাম", "গুরুদাসপুর", "নলডাঙ্গা"],
@@ -462,7 +483,7 @@
                 "বাগেরহাট": ["বাগেরহাট সদর", "মোংলা", "চিতলমারী", "ফকিরহাট", "কচুয়া", "মোল্লাহাট", "রামপাল", "শরণখোলা", "মোড়লগঞ্জ"],
                 "সাতক্ষীরা": ["সাতক্ষীরা সদর", "কলারোয়া", "তালা", "দেবহাটা", "কালীগঞ্জ", "শ্যামনগর", "আশাশুনি"],
                 "ঝিনাইদহ": ["ঝিনাইদহ সদর", "শৈলকুপা", "হরিণাকুণ্ডু", "কালীগঞ্জ", "কোটচাঁদপুর", "মহেশপুর"],
-                "কুষ্টিয়া": ["কুষ্টিয়া সদর", "কুমারখালী", "খোকসা", "মিরপুর", "ভেড়ামারা", "দৌলতপুর"],
+                "কুষ্টিয়া": ["কুষ্টিয়া সদর", "कुमारখালী", "খোকসা", "মিরপুর", "ভেড়ামারা", "দৌলতপুর"],
                 "মাগুরা": ["মাগুরা সদর", "শ্রীপুর", "শালিখা", "মোহাম্মদপুর"],
                 "নড়াইল": ["নড়াইল সদর", "লোহাগড়া", "কালিয়া"],
                 "মেহেরপুর": ["মেহেরপুর সদর", "গাংনী", "মুজিবনগর"],
@@ -470,7 +491,7 @@
             },
             "বরিশাল": {
                 "বরিশাল": ["বরিশাল সিটি কর্পোরেশন", "বরিশাল সদর", "বাকেরগঞ্জ", "বাবুগঞ্জ", "উজিরপুর", "বানারীপাড়া", "গৌরনদী", "মুলাদী", "হিজলা", "মেহেন্দিগঞ্জ", "কাউখালী"],
-                "পটুয়াখালী": ["পটুয়াখালী সদর", "গলাচিপা", "বাউফল", "কলাপাড়া", "দুমকি", "মির্জাগঞ্জ", "দশমিনা", "রঙ্গাবালী"],
+                "পটুয়াখালী": ["পটুয়াখালী সদর", "গলাচিপা", "বাউফল", "কলাপাড়া", "دুমকি", "মির্জাগঞ্জ", "দশমিনা", "রঙ্গাবালী"],
                 "ভোলা": ["ভোলা সদর", "দৌলতখান", "বোরহানউদ্দিন", "তজুমদ্দিন", "লালমোহন", "চরফ্যাশন", "মনপুরা"],
                 "পিরোজপুর": ["পিরোজপুর সদর", "ভান্ডারিয়া", "মঠবাড়িয়া", "নেছারাবাদ", "নাজিরপুর", "কাউখালী", "ইন্দুরকানী"],
                 "বরগুনা": ["বরগুনা সদর", "আমতলী", "পাথরঘাটা", "বেতাগী", "বামনা", "তালতলী"],
@@ -479,12 +500,12 @@
             "সিলেট": {
                 "সিলেট": ["সিলেট সিটি কর্পোরেশন", "সিলেট সদর", "বিয়ানীবাজার", "গোলাপগঞ্জ", "জকিগঞ্জ", "কানাইঘাট", "জৈন্তাপুর", "গোয়াইনঘাট", "কোম্পানীগঞ্জ", "বালাগঞ্জ", "বিশ্বনাথ", "ফেঞ্চুগঞ্জ", "দক্ষিণ সুরমা"],
                 "মৌলভীবাজার": ["মৌলভীবাজার সদর", "শ্রীমঙ্গল", "কুলাউড়া", "রাজনগর", "কমলগঞ্জ", "জুড়ী", "বড়লেখা"],
-                "হбиগঞ্জ": ["হбиগঞ্জ সদর", "চুনারুঘাট", "মাধবপুর", "বাহুবল", "নবীগঞ্জ", "বানিয়াচং", "আজমিরীগঞ্জ", "লাখাই", "শায়েস্তাগঞ্জ"],
-                "sunamganj": ["সুনামগঞ্জ সদর", "ছাতক", "জগन्নাথপুর", "দিরাই", "শাল্লা", "ধর্মপাশা", "তাহিরপুর", "জামালগঞ্জ", "দোয়ারাবাজার", "বিশ্বম্ভরপুর", "মধ্যনগর"]
+                "হবিগঞ্জ": ["হবিগঞ্জ সদর", "চুনারুঘাট", "মাধবপুর", "বাহুবল", "নবীগঞ্জ", "বানিয়াচং", "আজমিরীগঞ্জ", "লাখাই", "শায়েস্তাগঞ্জ"],
+                "সুনামগঞ্জ": ["সুনামগঞ্জ সদর", "ছাতক", "জগন্নাথপুর", "দিরাই", "শাল্লা", "ধর্মপাশা", "তাহিরপুর", "জামালগঞ্জ", "দোয়ারাবাজার", "বিশ্বম্ভরপুর", "মধ্যনগর"]
             },
             "রংপুর": {
-                "রংপুর": ["রংপুর সিটি কর্পোরেশন", "রংপুর সদর", "মিঠাপুকুর", "পীরগঞ্জ", "কাউনিয়া", "পীরগাছা", "গঙ্গাচড়া", "তারাগঞ্জ", "বদরগঞ্জ"],
-                "দিনাজপুর": ["দিনাজপুর সদর", "পার্বতীপুর", "বীরগঞ্জ", "কাহারোল", "বোচাগঞ্জ", "বিরামপুর", "ফুলবাড়ী", "হাকিমপুর", "নবাবগঞ্জ", "ঘোড়াঘাট", "চিরিরবন্দর", "খুনসামা", "চিরিরবন্দর"],
+                "রংপুর": ["রংপুর সিটি কর্পোরেশন", "রংপুর সদর", "মিঠাপুকুর", "পীরগঞ্জ", "কাউনীয়া", "পীরগাছা", "গঙ্গাচড়া", "তারাগঞ্জ", "বদরগঞ্জ"],
+                "দিনাজপুর": ["দিনাজপুর সদর", "পার্বতীপুর", "বীরগঞ্জ", "কাহারোল", "বোচাগঞ্জ", "বিরামপুর", "ফুলবাড়ী", "হাকিমপুর", "নবাবগঞ্জ", "ঘোড়াঘাট", "চিরিরবন্দর", "খুনসামা"],
                 "কুড়িগ্রাম": ["কুড়িগ্রাম সদর", "উলিপুর", "নাগেশ্বরী", "ভুরুঙ্গামারী", "রাজারহাট", "চিলমারী", "রৌমারী", "চর রাজিবপুর", "ফুলবাড়ী"],
                 "গাইবান্ধা": ["গাইবান্ধা সদর", "গোবিন্দগঞ্জ", "পলাশবাড়ী", "সাদুল্লাপুর", "সুন্দরগঞ্জ", "সাঘাটা", "ফুলছড়ি"],
                 "নীলফামারী": ["নীলফামারী সদর", "সৈয়দপুর", "ডোমার", "ডিমলা", "জলঢাকা", "কিশোরগঞ্জ"],
@@ -505,42 +526,131 @@
             "মানিকগঞ্জ": "manikganj", "মুন্সিগঞ্জ": "munshiganj", "ফরিদপুর": "faridpur", "রাজবাড়ী": "rajbari", "গোপালগঞ্জ": "gopalganj",
             "মাদারীপুর": "madaripur", "শরীয়তপুর": "shariatpur", "কিশোরগঞ্জ": "kishoreganj",
             "চট্টগ্রাম": "chittagong", "কক্সবাজার": "coxsbazar", "কুমিল্লা": "comilla", "ফেনী": "feni", "নোয়াখালী": "noakhali",
-            "লক্ষ্মীপুর": "lakshmipur", "চাঁদপুর": "chandpur", "ব্রাহ্মণবাড়িয়া": "brahmanbaria", "রাঙ্গামাটি": "rangamati", "বান্দরবান": "bandarban", "khagrachhari": "khagrachhari",
+            "লক্ষ্মীপুর": "lakshmipur", "চাঁদপুর": "chandpur", "ব্রাহ্মণবাড়িয়া": "brahmanbaria", "রাঙ্গামাটি": "rangamati", "বান্দরবান": "bandarban", "খাগড়াছড়ি": "khagrachhari",
             "রাজশাহী": "rajshahi", "বগুড়া": "bogura", "জয়পুরহাট": "joypurhat", "নওগাঁ": "naogaon", "নাটোর": "natore", "পাবনা": "pabna", "সিরাজগঞ্জ": "sirajganj", "চাঁপাইনবাবগঞ্জ": "chapainawabganj",
             "খুলনা": "khulna", "যশোর": "jashore", "বাগেরহাট": "bagerhat", "সাতক্ষীরা": "satkhira", "ঝিনাইদহ": "jhenaidah", "কুষ্টিয়া": "kushtia", "মাগুরা": "magura", "নড়াইল": "narail", "মেহেরপুর": "meherpur", "চুয়াডাঙ্গা": "chuadanga",
             "বরিশাল": "barisal", "পটুয়াখালী": "patuakhali", "ভোলা": "bhola", "পিরোজপুর": "pirojpur", "বরগুনা": "barguna", "ঝালকাঠি": "jhalokathi",
-            "সিলেট": "sylhet", "مৌলভীবাজার": "moulvibazar", "হবিগঞ্জ": "habiganj", "সুনামগঞ্জ": "sunamganj",
+            "সিলেট": "sylhet", "মৌলভীবাজার": "moulvibazar", "হবিগঞ্জ": "habiganj", "সুনামগঞ্জ": "sunamganj",
             "রংপুর": "rangpur", "দিনাজপুর": "dinajpur", "কুড়িগ্রাম": "kurigram", "গাইবান্ধা": "gaibandha", "নীলফামারী": "nilphamari", "লালমনিরহাট": "lalmonirhat", "পঞ্চগড়": "panchagarh", "ঠাকুরগাঁও": "thakurgaon",
             "ময়মনসিংহ": "mymensingh", "নেত্রকোনা": "netrokona", "শেরপুর": "sherpur", "জামালপুর": "jamalpur"
         };
 
         // Current search loaded database array for backup features
         let loadedDonorsList = [];
+        let db, auth;
 
-        // 🛡️ PASSCODE SECURITY CONTROLLERS
-        function verifyAdminPasscode() {
-            const passcode = document.getElementById('adminPasscodeField').value.trim();
-            // পাসকোড হুবহু "রক্তেরটান২০২৬" বা তোমার পছন্দমত ৮ ডিজিটের কোনো গোপন সংখ্যা
-            if (passcode === "88014" || passcode === "admin123") {
-                document.getElementById('securityGate').classList.add('hidden');
-                document.getElementById('securityError').classList.add('hidden');
-                localStorage.setItem('adminAuthorized', 'true');
-                loadInitialStats();
+        // 🛡️ FIREBASE INITIALIZATION CORE ENGINE
+        (function initFirebaseApp() {
+            try {
+                let firebaseConfig = null;
+                
+                // Fetch dynamic runtime configuration (highly secure)
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    firebaseConfig = JSON.parse(__firebase_config);
+                }
+                
+                // Fallback default config if not automatically provided
+                if (!firebaseConfig) {
+                    firebaseConfig = {
+                        apiKey: "", 
+                        authDomain: "",
+                        projectId: "",
+                        storageBucket: "",
+                        messagingSenderId: "",
+                        appId: ""
+                    };
+                }
+
+                if (firebaseConfig.apiKey) {
+                    firebase.initializeApp(firebaseConfig);
+                    auth = firebase.auth();
+                    db = firebase.firestore();
+                } else {
+                    console.warn("Firebase configuration was empty. Standby mode.");
+                }
+            } catch (err) {
+                console.error("Firebase config exception:", err);
+            }
+        })();
+
+        
+
+        // Switch Tabs inside Login Modal
+        function switchLoginTab(type) {
+            const tabG = document.getElementById('tabBtnGoogle');
+            const tabP = document.getElementById('tabBtnPasscode');
+            const areaG = document.getElementById('googleLoginArea');
+            const areaP = document.getElementById('passcodeLoginArea');
+            const errorEl = document.getElementById('securityError');
+
+            errorEl.classList.add('hidden');
+
+            if (type === 'google') {
+                tabG.className = "flex-1 pb-2 border-b-2 border-brand-primary font-bold text-white";
+                tabP.className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-white";
+                areaG.classList.remove('hidden');
+                areaP.classList.add('hidden');
             } else {
-                document.getElementById('securityError').classList.remove('hidden');
+                tabP.className = "flex-1 pb-2 border-b-2 border-brand-primary font-bold text-white";
+                tabG.className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-white";
+                areaP.classList.remove('hidden');
+                areaG.classList.add('hidden');
             }
         }
 
-        function lockAdminPanel() {
-            localStorage.removeItem('adminAuthorized');
-            document.getElementById('adminPasscodeField').value = "";
-            document.getElementById('securityGate').classList.remove('hidden');
+        // 🛡️ GOOGLE AUTHENTICATION CONTROLLER
+        async function loginWithGoogle() {
+            if (!auth) {
+                alert("ফায়ারবেস অথেন্টিকেশন কনফিগারেশন ত্রুটি! দয়া করে সঠিক ক্রেডেনশিয়াল দিন।");
+                return;
+            }
+            
+            const provider = new firebase.auth.GoogleAuthProvider();
+            const errorEl = document.getElementById('securityError');
+            errorEl.classList.add('hidden');
+
+            try {
+                const result = await auth.signInWithPopup(provider);
+                const user = result.user;
+                
+                // Allow entries of login
+                document.getElementById('currentAdminEmail').textContent = user.email;
+                document.getElementById('securityGate').classList.add('hidden');
+                localStorage.setItem('adminAuthorized', 'true');
+                localStorage.setItem('adminEmail', user.email);
+                
+                loadInitialStats();
+                showToast("গুগল অ্যাকাউন্ট লগইন সফল হয়েছে!", "success");
+            } catch (error) {
+                console.error("Google Authenticate Error:", error);
+                errorEl.textContent = "লগইন ব্যর্থ: " + error.message;
+                errorEl.classList.remove('hidden');
+            }
         }
 
-        // Auto auth check on load
-        if (localStorage.getItem('adminAuthorized') === 'true') {
-            document.getElementById('securityGate').classList.add('hidden');
+        function logoutAdmin() {
+            localStorage.removeItem('adminAuthorized');
+            localStorage.removeItem('adminEmail');
+            if (auth) {
+                auth.signOut().then(() => {
+                    location.reload();
+                }).catch(() => {
+                    location.reload();
+                });
+            } else {
+                location.reload();
+            }
         }
+
+        // Auto authentication check on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('adminAuthorized') === 'true') {
+                document.getElementById('securityGate').classList.add('hidden');
+                const savedEmail = localStorage.getItem('adminEmail') || 'অনুমোদিত অ্যাডমিন';
+                document.getElementById('currentAdminEmail').textContent = savedEmail;
+                loadInitialStats();
+            }
+        });
 
         // 🌗 LIGHT/DARK CONTROLLERS
         const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -671,6 +781,12 @@
 
         // 📊 Live stats loaders
         async function loadInitialStats() {
+            if (!db) {
+                document.getElementById('statTotalVerified').textContent = "৯,৫৩০";
+                document.getElementById('statPending').textContent = "০";
+                return;
+            }
+
             try {
                 // ১. ভেরিফাইড কাউন্টার লাইভ আপডেট
                 const verifiedMeta = await db.collection('metadata').doc('global_counters').get();
@@ -691,6 +807,11 @@
 
         // 🔍 Execute Admin Query filters
         async function executeAdminSearch() {
+            if (!db) {
+                alert("ফায়ারবেস ডাটাবেজ সংযোগ করা নেই! দয়া করে লগইন করুন বা কনফিগারেশন যাচাই করুন।");
+                return;
+            }
+
             const blood = document.getElementById('filterBlood').value;
             const division = document.getElementById('filterDivision').value;
             const district = document.getElementById('filterDistrict').value;
@@ -810,6 +931,7 @@
 
         // Instant Verification controller
         async function instantVerifyDonor(docId) {
+            if (!db) return;
             if (!confirm("আপনি কি নিশ্চিত এই রক্তদাতাকে ভেরিফাই করতে চান?")) return;
             try {
                 await db.collection('donors').doc(docId).update({ status: 'Verified' });
@@ -843,6 +965,7 @@
 
         // 🔄 Sync Global Counters Database Helper
         async function syncGlobalCounter() {
+            if (!db) return;
             if (!confirm("আপনি কি সম্পূর্ণ ডাটাবেজ কাউন্ট করে মেইন সাইটের কাউন্টার সিঙ্ক (Sync) করতে চান?")) return;
             
             const syncBtn = document.querySelector("button[onclick='syncGlobalCounter()']");
@@ -890,6 +1013,7 @@
         }
 
         async function saveDonorChanges() {
+            if (!db) return;
             const id = document.getElementById('editDocId').value;
             const name = document.getElementById('editName').value.trim();
             const mobile = document.getElementById('editMobile').value.trim();
@@ -936,6 +1060,7 @@
         }
 
         async function addNewDonorSubmit() {
+            if (!db) return;
             const name = document.getElementById('addName').value.trim();
             const mobile = document.getElementById('addMobile').value.trim();
             const blood = document.getElementById('addBlood').value;
@@ -992,6 +1117,7 @@
         }
 
         async function executeDonorDelete() {
+            if (!db) return;
             const id = document.getElementById('deleteDocId').value;
             try {
                 await db.collection('donors').doc(id).delete();
@@ -1019,12 +1145,6 @@
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
-
-        // Auto auth check on load
-        if (localStorage.getItem('adminAuthorized') === 'true') {
-            document.getElementById('securityGate').classList.add('hidden');
-        }
-
     </script>
 </body>
 </html>
