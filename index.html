@@ -59,26 +59,19 @@
 
     <!-- Firebase Google Login Secure Gate (Security First) -->
     <div id="securityGate" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4 overflow-y-auto">
-        <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-sm w-full text-center space-y-5 shadow-2xl my-auto">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-sm w-full text-center space-y-6 shadow-2xl my-auto">
             <div class="bg-rose-500/10 text-brand-primary p-4 rounded-full inline-block animate-pulse">
                 <i class="fa-solid fa-shield-halved text-3xl"></i>
             </div>
             <div class="space-y-1">
                 <h2 class="text-xl font-bold text-white">অ্যাডমিন লগইন পোর্টাল</h2>
-                <p class="text-xs text-slate-400">এই কন্ট্রোল প্যানেলে প্রবেশ করতে অনুগ্রহ করে যাচাইকরণ সম্পন্ন করুন।</p>
+                <p class="text-xs text-slate-400">এই কন্ট্রোল প্যানেলে প্রবেশ করতে শুধুমাত্র অনুমোদিত অ্যাডমিন ইমেইল দিয়ে গুগল লগইন সম্পন্ন করুন।</p>
             </div>
             
-            <!-- Login Method Tabs -->
-            <div class="flex border-b border-slate-800 text-xs">
-                <button onclick="switchLoginTab('google')" id="tabBtnGoogle" class="flex-1 pb-2 border-b-2 border-brand-primary font-bold text-white">গুগল লগইন</button>
-                <button onclick="switchLoginTab('passcode')" id="tabBtnPasscode" class="flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-white">পাসকোড লগইন</button>
-            </div>
-
-            <!-- Google Login Tab Content -->
-            <div id="googleLoginArea" class="space-y-3 py-2">
-                <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3 rounded-xl text-xs transition flex items-center justify-center gap-2.5 shadow-md active:scale-[0.98]">
-                    <!-- Standard Official Google SVG Logo (Crisp and reliable size) -->
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+            <div class="space-y-3 pt-2">
+                <!-- Google Login Button with Crisp Official SVG Logo -->
+                <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3.5 rounded-xl text-xs transition flex items-center justify-center gap-3 shadow-md active:scale-[0.98]">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
@@ -87,16 +80,8 @@
                     Sign in with Google
                 </button>
             </div>
-
-            <!-- Passcode Login Tab Content (Fallback alternative) -->
-            <div id="passcodeLoginArea" class="space-y-3 py-2 hidden">
-                <input type="password" id="adminPasscodeField" placeholder="সিক্রেট পাসকোড লিখুন" class="w-full bg-slate-950 border border-slate-850 rounded-xl px-4 py-2.5 text-xs outline-none focus:ring-2 focus:ring-brand-primary text-center tracking-widest text-white">
-                <button onclick="verifyAdminPasscode()" class="w-full bg-brand-primary hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition active:scale-[0.98]">
-                    পাসকোড ভেরিফাই করুন
-                </button>
-            </div>
-
-            <p id="securityError" class="text-xs text-brand-primary font-bold hidden bg-rose-500/10 border border-rose-500/20 py-2 rounded-xl">ভুল ক্রেডেনশিয়াল! প্রবেশ সম্পূর্ণ নিষিদ্ধ।</p>
+            
+            <p id="securityError" class="text-xs text-brand-primary font-bold hidden bg-rose-500/10 border border-rose-500/20 py-2.5 rounded-xl">ভুল ইমেইল! এই ইমেইল দিয়ে প্রবেশ করা সম্পূর্ণ নিষিদ্ধ।</p>
         </div>
     </div>
 
@@ -109,7 +94,7 @@
                 </div>
                 <div>
                     <h1 class="text-sm md:text-lg font-bold text-white leading-snug">ইমারজেন্সি রক্ত লাগবে? - কন্ট্রোল প্যানেল</h1>
-                    <p class="text-[10px] text-slate-400">লগইন ইমেইল/আইডি: <span id="currentAdminEmail" class="font-semibold text-rose-500">...</span></p>
+                    <p class="text-[10px] text-slate-400">লগইন ইমেইল: <span id="currentAdminEmail" class="font-semibold text-rose-500">...</span></p>
                 </div>
             </div>
 
@@ -430,10 +415,10 @@
         <span id="toastMsg" class="font-medium text-white">অপারেশন সফল হয়েছে!</span>
     </div>
 
-    <!-- Firebase SDK core compat models -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- Firebase SDK core compat models (Standard CDN Compat for Plain HTML inside Iframe/Browser) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
     <!-- App JavaScript Engine -->
     <script>
@@ -447,15 +432,15 @@
                 "টাঙ্গাইল": ["টাঙ্গাইল সদর", "মির্জাপুর", "কালিহাতী", "घाटাইল", "দেলদুয়ার", "গোপালপুর", "বাসাইল", "ভূঞাপুর", "মধুপুর", "নাগরপুর", "সখিপুর", "ধনবাড়ী"],
                 "মানিকগঞ্জ": ["মানিকগঞ্জ সদর", "সিংগাইর", "শিবালয়", "ঘিওর", "হরিরামপুর", "দৌলতপুর", "সাটুরিয়া"],
                 "মুন্সিগঞ্জ": ["মুন্সিগঞ্জ সদর", "শ্রীনগর", "সিরাজদিখান", "লৌহজং", "গজারিয়া", "টংগিবাড়ী"],
-                "ফরিদপুর": ["ফরিদপুর সদর", "বোয়ালমারী", "আলফাডাঙ্গা", "মধুখালী", "ভাঙ্গা", "চরভদ্রাসন", "সদরপুর", "সালथा", "নগরকান্দা"],
+                "ফরিদপুর": ["ফরিদপুর সদর", "বোয়ালমারী", "আলফাডাঙ্গা", "মধুখালী", "ভাঙ্গা", "চরভদ্রাসন", "সদরপুর", "সালথা", "নগরকান্দা"],
                 "রাজবাড়ী": ["রাজবাড়ী সদর", "গোয়ালন্দ", "পাংশা", "বালিয়াকান্দি", "কালুখালী"],
-                "গোপালগঞ্জ": ["গোপালগঞ্জ সদর", "টুঙ্গিপাড়া", "কোটালীপাড়া", "কাশিয়ানী", "মুকসুদপুর"],
+                "গোপালগঞ্জ": ["গোপালগঞ্জ সদর", "টুঙ্গিপাড়া", "কোটালীপাড়া", "কাশিয়ানী", "مুকসুদপুর"],
                 "মাদারীপুর": ["মাদারীপুর সদর", "শিবচর", "কালকিনি", "রাজৈর"],
                 "শরীয়তপুর": ["শরীয়তপুর সদর", "ডামুড্যা", "নড়িয়া", "জাজিরা", "ভেদরগঞ্জ", "গোসাইরহাট"],
                 "কিশোরগঞ্জ": ["কিশোরগঞ্জ সদর", "কটিয়াদী", "ভৈরব", "বাজিতপুর", "নিকলী", "করিমগঞ্জ", "হোসেনপুর", "তাড়াইল", "পাকুন্দিয়া", "মিঠামইন", "ইটনা", "অষ্টগ্রাম", "কুলিয়ারচর"]
             },
             "চট্টগ্রাম": {
-                "চট্টগ্রাম": ["চট্টগ্রাম সিটি কর্পোরেশন", "হাটহাজারী", "পটিয়া", "সন্দ্বীপ", "রাঙ্গুনিয়া", "রাউজান", "বোয়ালখালী", "আনোয়ারা", "চন্দনাইশ", "বাঁশখালী", "সাতকানিিয়া", "লোহাগাড়া", "ফটিকছড়ি", "মীরসরাই", "সীতাকুণ্ড"],
+                "চট্টগ্রাম": ["চট্টগ্রাম সিটি কর্পোরেশন", "হাটহাজারী", "পটিয়া", "সন্দ্বীপ", "রাঙ্গুনিয়া", "রাউজান", "বোয়ালখালী", "আনোয়ারা", "চন্দনাইশ", "বাঁশখালী", "সাতকানিয়া", "লোহাগাড়া", "ফটিকছড়ি", "মীরসরাই", "সীতাকুণ্ড"],
                 "কক্সবাজার": ["কক্সবাজার সদর", "চকরিয়া", "মহেশখালী", "টেকনাফ", "উখিয়া", "পেকুয়া", "কুতুবদিয়া", "রামু"],
                 "কুমিল্লা": ["কুমিল্লা আদর্শ সদর", "কুমিল্লা সদর দক্ষিণ", "চৌদ্দগ্রাম", "লাকসাম", "লাঙ্গলকোট", "বরুড়া", "দাউদকান্দি", "চান্দিনা", "দেবিদ্বার", "মুরাদনগর", "বুড়িচং", "ব্রাহ্মণপাড়া", "হোমনা", "মেঘনা", "তিতাস", "মনোহরগঞ্জ"],
                 "ফেনী": ["ফেনী সদর", "ছাগলনাইয়া", "দাগনভূঞা", "সোনাগাজী", "পরশুরাম", "ফুলগাজী"],
@@ -465,16 +450,16 @@
                 "ব্রাহ্মণবাড়িয়া": ["ব্রাহ্মণবাড়িয়া সদর", "আশুগঞ্জ", "সরাইল", "নাসিরনগর", "বাঞ্ছারামপুর", "নবীনগর", "কসবা", "আখাউড়া", "বিজয়নগর"],
                 "রাঙ্গামাটি": ["রাঙ্গামাটি সদর", "কাপ্তাই", "কাউখালী", "বাঘাইছড়ি", "লংগদু", "নানিয়ারচর", "রাজস্থলী", "জুরাছড়ি", "বিলাইছড়ি", "বরকল"],
                 "বান্দরবান": ["বান্দরবান সদর", "রুমা", "থানচি", "রোয়াংছড়ি", "লামা", "আলীকদম", "নাইক্ষ্যংছড়ি"],
-                "খাগড়াছড়ি": ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মাটিরাঙ্গা", "মহালছড়ি", "মানিকছড়ি", "রামগড়", "গুইমারা", "লক্ষ্মীছড়ি"]
+                "খাগড়াছড়ি": ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মাটিরাঙ্গা", "মহালছড়ি", "মানিকছড়ি", "রামগড়", "গুইমারা", "লক্ষ্মীছড়ি"]
             },
             "রাজশাহী": {
                 "রাজশাহী": ["রাজশাহী সিটি কর্পোরেশন", "পবা", "গোদাগাড়ী", "তানোর", "বাঘা", "চারঘাট", "দুর্গাপুর", "মোহনপুর", "পুঠিয়া", "বাগমারা"],
-                "বগুড়া": ["বগুড়া সদর", "শেরপুর", "শিবগঞ্জ", "ধুনট", "নন্দীগ্রাম", "সারিয়াকান্দি", "গাবতলী", "কাহালু", "আদমদীঘি", "দুপচাচিয়া", "সোনাতলা", "শাজাহানপুর"],
+                "বগুড়া": ["বগুড়া সদর", "শেরপুর", "শিবগঞ্জ", "ধুনট", "নন্দীগ্রাম", "সারিয়াকান্দি", "গাবতলী", "কাহালু", "আदमদীঘি", "দুপচাচিয়া", "সোনাতলা", "শাজাহানপুর"],
                 "জয়পুরহাট": ["জয়পুরহাট সদর", "পাঁচবিবি", "কালাই", "ক্ষেতলাল", "আক্কেলপুর"],
                 "নওগাঁ": ["নওগাঁ সদর", "মহাদেবপুর", "বدلগাছী", "পত্নীতলা", "ধামইরহাট", "সাপাহার", "পোরশা", "নিয়ামতপুর", "মান্দা", "আত্রাই", "রানীনগর"],
                 "নাটোর": ["নাটোর সদর", "সিংড়া", "বাগাতিপাড়া", "লালপুর", "বড়াইগ্রাম", "গুরুদাসপুর", "নলডাঙ্গা"],
                 "পাবনা": ["পাবনা সদর", "ঈশ্বরদী", "চাটমোহর", "ভাঙ্গুড়া", "ফরিদপুর", "সুজানগর", "বেড়া", "সাঁথিয়া", "আটঘরিয়া"],
-                "সিরাজগঞ্জ": ["সিরাজগঞ্জ সদর", "শাহজাদপুর", "উল্লাপাড়া", "বেলকুচি", "কামারখন্দ", "কাজীপুর", "রায়গঞ্জ", "তাড়াশ", "চৌহালী"],
+                "সিরাজগঞ্জ": ["সিরাজগঞ্জ সদর", "शाहজাদপুর", "উল্লাপাড়া", "বেলকুচি", "কামারখন্দ", "কাজীপুর", "রায়গঞ্জ", "তাড়াশ", "চৌহালী"],
                 "চাঁপাইনবাবগঞ্জ": ["চাঁপাইনবাবগঞ্জ সদর", "শিবগঞ্জ", "গোমস্তাপুর", "নাচোল", "ভোলাহাট"]
             },
             "খুলনা": {
@@ -483,7 +468,7 @@
                 "বাগেরহাট": ["বাগেরহাট সদর", "মোংলা", "চিতলমারী", "ফকিরহাট", "কচুয়া", "মোল্লাহাট", "রামপাল", "শরণখোলা", "মোড়লগঞ্জ"],
                 "সাতক্ষীরা": ["সাতক্ষীরা সদর", "কলারোয়া", "তালা", "দেবহাটা", "কালীগঞ্জ", "শ্যামনগর", "আশাশুনি"],
                 "ঝিনাইদহ": ["ঝিনাইদহ সদর", "শৈলকুপা", "হরিণাকুণ্ডু", "কালীগঞ্জ", "কোটচাঁদপুর", "মহেশপুর"],
-                "কুষ্টিয়া": ["কুষ্টিয়া সদর", "कुमारখালী", "খোকসা", "মিরপুর", "ভেড়ামারা", "দৌলতপুর"],
+                "কুষ্টিয়া": ["কুষ্টিয়া সদর", "কুমারখালী", "খোকসা", "মিরপুর", "ভেড়ামারা", "দৌলতপুর"],
                 "মাগুরা": ["মাগুরা সদর", "শ্রীপুর", "শালিখা", "মোহাম্মদপুর"],
                 "নড়াইল": ["নড়াইল সদর", "লোহাগড়া", "কালিয়া"],
                 "মেহেরপুর": ["মেহেরপুর সদর", "গাংনী", "মুজিবনগর"],
@@ -491,7 +476,7 @@
             },
             "বরিশাল": {
                 "বরিশাল": ["বরিশাল সিটি কর্পোরেশন", "বরিশাল সদর", "বাকেরগঞ্জ", "বাবুগঞ্জ", "উজিরপুর", "বানারীপাড়া", "গৌরনদী", "মুলাদী", "হিজলা", "মেহেন্দিগঞ্জ", "কাউখালী"],
-                "পটুয়াখালী": ["পটুয়াখালী সদর", "গলাচিপা", "বাউফল", "কলাপাড়া", "دুমকি", "মির্জাগঞ্জ", "দশমিনা", "রঙ্গাবালী"],
+                "পটুয়াখালী": ["পটুয়াখালী সদর", "গলাচিপা", "বাউফল", "কলাপাড়া", "দুমকি", "মির্জাগঞ্জ", "দশমিনা", "রঙ্গাবালী"],
                 "ভোলা": ["ভোলা সদর", "দৌলতখান", "বোরহানউদ্দিন", "তজুমদ্দিন", "লালমোহন", "চরফ্যাশন", "মনপুরা"],
                 "পিরোজপুর": ["পিরোজপুর সদর", "ভান্ডারিয়া", "মঠবাড়িয়া", "নেছারাবাদ", "নাজিরপুর", "কাউখালী", "ইন্দুরকানী"],
                 "বরগুনা": ["বরগুনা সদর", "আমতলী", "পাথরঘাটা", "বেতাগী", "বামনা", "তালতলী"],
@@ -504,7 +489,7 @@
                 "সুনামগঞ্জ": ["সুনামগঞ্জ সদর", "ছাতক", "জগন্নাথপুর", "দিরাই", "শাল্লা", "ধর্মপাশা", "তাহিরপুর", "জামালগঞ্জ", "দোয়ারাবাজার", "বিশ্বম্ভরপুর", "মধ্যনগর"]
             },
             "রংপুর": {
-                "রংপুর": ["রংপুর সিটি কর্পোরেশন", "রংপুর সদর", "মিঠাপুকুর", "পীরগঞ্জ", "কাউনীয়া", "পীরগাছা", "গঙ্গাচড়া", "তারাগঞ্জ", "বদরগঞ্জ"],
+                "রংপুর": ["রংপুর সিটি কর্পোরেশন", "রংপুর সদর", "মিঠাপুকুর", "পীরগঞ্জ", "কাউনিয়া", "পীরগাছা", "গঙ্গাচড়া", "তারাগঞ্জ", "বদরগঞ্জ"],
                 "দিনাজপুর": ["দিনাজপুর সদর", "পার্বতীপুর", "বীরগঞ্জ", "কাহারোল", "বোচাগঞ্জ", "বিরামপুর", "ফুলবাড়ী", "হাকিমপুর", "নবাবগঞ্জ", "ঘোড়াঘাট", "চিরিরবন্দর", "খুনসামা"],
                 "কুড়িগ্রাম": ["কুড়িগ্রাম সদর", "উলিপুর", "নাগেশ্বরী", "ভুরুঙ্গামারী", "রাজারহাট", "চিলমারী", "রৌমারী", "চর রাজিবপুর", "ফুলবাড়ী"],
                 "গাইবান্ধা": ["গাইবান্ধা সদর", "গোবিন্দগঞ্জ", "পলাশবাড়ী", "সাদুল্লাপুর", "সুন্দরগঞ্জ", "সাঘাটা", "ফুলছড়ি"],
@@ -526,7 +511,7 @@
             "মানিকগঞ্জ": "manikganj", "মুন্সিগঞ্জ": "munshiganj", "ফরিদপুর": "faridpur", "রাজবাড়ী": "rajbari", "গোপালগঞ্জ": "gopalganj",
             "মাদারীপুর": "madaripur", "শরীয়তপুর": "shariatpur", "কিশোরগঞ্জ": "kishoreganj",
             "চট্টগ্রাম": "chittagong", "কক্সবাজার": "coxsbazar", "কুমিল্লা": "comilla", "ফেনী": "feni", "নোয়াখালী": "noakhali",
-            "লক্ষ্মীপুর": "lakshmipur", "চাঁদপুর": "chandpur", "ব্রাহ্মণবাড়িয়া": "brahmanbaria", "রাঙ্গামাটি": "rangamati", "বান্দরবান": "bandarban", "খাগড়াছড়ি": "khagrachhari",
+            "লক্ষ্মীপুর": "lakshmipur", "চাঁদপুর": "chandpur", "ব্রাহ্মণবাড়িয়া": "brahmanbaria", "রাঙ্গামাটি": "rangamati", "বান্দরবান": "bandarban", "khagrachhari": "khagrachhari",
             "রাজশাহী": "rajshahi", "বগুড়া": "bogura", "জয়পুরহাট": "joypurhat", "নওগাঁ": "naogaon", "নাটোর": "natore", "পাবনা": "pabna", "সিরাজগঞ্জ": "sirajganj", "চাঁপাইনবাবগঞ্জ": "chapainawabganj",
             "খুলনা": "khulna", "যশোর": "jashore", "বাগেরহাট": "bagerhat", "সাতক্ষীরা": "satkhira", "ঝিনাইদহ": "jhenaidah", "কুষ্টিয়া": "kushtia", "মাগুরা": "magura", "নড়াইল": "narail", "মেহেরপুর": "meherpur", "চুয়াডাঙ্গা": "chuadanga",
             "বরিশাল": "barisal", "পটুয়াখালী": "patuakhali", "ভোলা": "bhola", "পিরোজপুর": "pirojpur", "বরগুনা": "barguna", "ঝালকাঠি": "jhalokathi",
@@ -539,69 +524,44 @@
         let loadedDonorsList = [];
         let db, auth;
 
-        // 🛡️ FIREBASE INITIALIZATION CORE ENGINE
-        (function initFirebaseApp() {
-            try {
-                let firebaseConfig = null;
-                
-                // Fetch dynamic runtime configuration (highly secure)
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    firebaseConfig = JSON.parse(__firebase_config);
-                }
-                
-                // Fallback default config if not automatically provided
-                if (!firebaseConfig) {
-                    firebaseConfig = {
-                        apiKey: "", 
-                        authDomain: "",
-                        projectId: "",
-                        storageBucket: "",
-                        messagingSenderId: "",
-                        appId: ""
-                    };
-                }
+        // 🛡️ AUTHORIZED EMAIL LIST (SECURE ACCESS CONTROL)
+        // এই অ্যারের মধ্যে যে যে ইমেইল আইডিগুলো রাখবে, শুধুমাত্র তারাই লগইন করতে পারবে।
+        // তোমার নিজের ইমেইল আইডিটি অবশ্যই এখানে যুক্ত করবে। (যেমন: "omar@gmail.com")
+        const ALLOWED_ADMINS = [
+            "mdomorfaruk2r@gmail.com", 
+            "info.ghostpost@gmail.com",
+            "muhammedomor.youtube@gmail.com" // প্রয়োজন অনুযায়ী এখানে অন্যান্য জিমেইল যোগ করতে পারো
+        ];
 
-                if (firebaseConfig.apiKey) {
+        // 🛡️ FIREBASE INITIALIZATION ENGINE
+        (function initFirebaseApp() {
+            // Your exact web app's Firebase configuration (provided by Omar)
+            const firebaseConfig = {
+                apiKey: "AIzaSyCUlcAtzmJLwZmCCdliL3n9oePKXrUZodc",
+                authDomain: "roktolagbebd.firebaseapp.com",
+                projectId: "roktolagbebd",
+                storageBucket: "roktolagbebd.firebasestorage.app",
+                messagingSenderId: "612218868571",
+                appId: "1:612218868571:web:b369863ac82d4d0ad9407e",
+                measurementId: "G-W543L13Z7Y"
+            };
+
+            try {
+                if (!firebase.apps.length) {
                     firebase.initializeApp(firebaseConfig);
-                    auth = firebase.auth();
-                    db = firebase.firestore();
-                } else {
-                    console.warn("Firebase configuration was empty. Standby mode.");
                 }
+                auth = firebase.auth();
+                db = firebase.firestore();
+                console.log("Firebase initialized successfully for Rokto Lagbe BD!");
             } catch (err) {
                 console.error("Firebase config exception:", err);
             }
         })();
 
-        
-
-        // Switch Tabs inside Login Modal
-        function switchLoginTab(type) {
-            const tabG = document.getElementById('tabBtnGoogle');
-            const tabP = document.getElementById('tabBtnPasscode');
-            const areaG = document.getElementById('googleLoginArea');
-            const areaP = document.getElementById('passcodeLoginArea');
-            const errorEl = document.getElementById('securityError');
-
-            errorEl.classList.add('hidden');
-
-            if (type === 'google') {
-                tabG.className = "flex-1 pb-2 border-b-2 border-brand-primary font-bold text-white";
-                tabP.className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-white";
-                areaG.classList.remove('hidden');
-                areaP.classList.add('hidden');
-            } else {
-                tabP.className = "flex-1 pb-2 border-b-2 border-brand-primary font-bold text-white";
-                tabG.className = "flex-1 pb-2 border-b-2 border-transparent text-slate-400 font-bold hover:text-white";
-                areaP.classList.remove('hidden');
-                areaG.classList.add('hidden');
-            }
-        }
-
-        // 🛡️ GOOGLE AUTHENTICATION CONTROLLER
+        // 🛡️ GOOGLE AUTHENTICATION CONTROLLER (Popup method with strict domain check)
         async function loginWithGoogle() {
             if (!auth) {
-                alert("ফায়ারবেস অথেন্টিকেশন কনফিগারেশন ত্রুটি! দয়া করে সঠিক ক্রেডেনশিয়াল দিন।");
+                alert("ফায়ারবেস অথেন্টিকেশন কনফিগারেশন ত্রুটি! দয়া করে কনফিগারেশন যাচাই করুন।");
                 return;
             }
             
@@ -612,22 +572,35 @@
             try {
                 const result = await auth.signInWithPopup(provider);
                 const user = result.user;
-                
-                // Allow entries of login
-                document.getElementById('currentAdminEmail').textContent = user.email;
-                document.getElementById('securityGate').classList.add('hidden');
-                localStorage.setItem('adminAuthorized', 'true');
-                localStorage.setItem('adminEmail', user.email);
-                
-                loadInitialStats();
-                showToast("গুগল অ্যাকাউন্ট লগইন সফল হয়েছে!", "success");
+                const userEmail = user.email.toLowerCase();
+
+                // Check authorization list
+                const isAuthorized = ALLOWED_ADMINS.some(email => email.toLowerCase() === userEmail);
+
+                if (isAuthorized || ALLOWED_ADMINS.length === 0) {
+                    document.getElementById('currentAdminEmail').textContent = user.email;
+                    document.getElementById('securityGate').classList.add('hidden');
+                    localStorage.setItem('adminAuthorized', 'true');
+                    localStorage.setItem('adminEmail', user.email);
+                    
+                    loadInitialStats();
+                    showToast("গুগল লগইন সফল হয়েছে!", "success");
+                } else {
+                    // Not authorized - Sign out immediately
+                    await auth.signOut();
+                    errorEl.textContent = `অপ্রত্যাশিত প্রবেশাধিকার! ইমেইল (${user.email}) অনুমোদিত এডমিন তালিকায় নেই।`;
+                    errorEl.classList.remove('hidden');
+                    localStorage.removeItem('adminAuthorized');
+                    localStorage.removeItem('adminEmail');
+                }
             } catch (error) {
-                console.error("Google Authenticate Error:", error);
-                errorEl.textContent = "লগইন ব্যর্থ: " + error.message;
+                console.error("Google Auth Error:", error);
+                errorEl.textContent = "লগইন ত্রুটি: " + error.message;
                 errorEl.classList.remove('hidden');
             }
         }
 
+        // Secure Logout Engine
         function logoutAdmin() {
             localStorage.removeItem('adminAuthorized');
             localStorage.removeItem('adminEmail');
@@ -642,7 +615,7 @@
             }
         }
 
-        // Auto authentication check on page load
+        // Automatic persistent state verification
         window.addEventListener('DOMContentLoaded', () => {
             if (localStorage.getItem('adminAuthorized') === 'true') {
                 document.getElementById('securityGate').classList.add('hidden');
@@ -652,7 +625,7 @@
             }
         });
 
-        // 🌗 LIGHT/DARK CONTROLLERS
+        // 🌗 LIGHT/DARK THEME CONTROLLERS
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const themeToggleIcon = document.getElementById('themeToggleIcon');
 
@@ -678,7 +651,7 @@
             }
         });
 
-        // Toast controller
+        // Global Custom Toast controller
         function showToast(message, type = "success") {
             const toast = document.getElementById('alertToast');
             const icon = document.getElementById('toastIcon');
@@ -700,7 +673,7 @@
             }, 3000);
         }
 
-        // Dropdowns setup
+        // District Dropdowns loading logic
         function loadDivisionDropdown(selectId) {
             const selectEl = document.getElementById(selectId);
             selectEl.innerHTML = `<option value="">বিভাগ</option>`;
@@ -943,7 +916,7 @@
             }
         }
 
-        // 📥 Database Backup Downloader Engine (Omar's request)
+        // 📥 Database Backup Downloader Engine
         function backupCurrentSearch() {
             if (loadedDonorsList.length === 0) {
                 alert("ব্যাকআপ করার জন্য কোনো ডাটা লোড করা নেই!");
@@ -1131,11 +1104,12 @@
             }
         }
 
-        // Helpers
+        // Mobile Friendly BD Phone verification Helper
         function isValidBDPhone(phone) {
             return /^01[3-9]\d{8}$/.test(phone);
         }
 
+        // HTML escaping helper
         function escapeHtml(text) {
             if (!text) return "";
             return text
