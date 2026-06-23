@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>অ্যাডমিন প্যানেল - ইমারজেন্সি রক্ত লাগবে ?</title>
-    
+
     <!-- Google Fonts: Hind Siliguri (Bengali) & Inter (English) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Premium Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -57,31 +57,39 @@
 </head>
 <body class="bg-slate-950 text-slate-100 transition-colors duration-300 min-h-screen flex flex-col font-sans">
 
-    <!-- Firebase Google Login Secure Gate (Security First) -->
+    <!-- WhatsApp Secure Login Gate (Security First) -->
     <div id="securityGate" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4 overflow-y-auto">
         <div class="bg-slate-900 border border-slate-800 p-6 rounded-3xl max-w-sm w-full text-center space-y-6 shadow-2xl my-auto">
-            <div class="bg-rose-500/10 text-brand-primary p-4 rounded-full inline-block animate-pulse">
-                <i class="fa-solid fa-shield-halved text-3xl"></i>
+            <div class="bg-emerald-500/10 text-brand-success p-4 rounded-full inline-block animate-pulse">
+                <i class="fa-brands fa-whatsapp text-4xl"></i>
             </div>
             <div class="space-y-1">
-                <h2 class="text-xl font-bold text-white">অ্যাডমিন লগইন পোর্টাল</h2>
-                <p class="text-xs text-slate-400">এই কন্ট্রোল প্যানেলে প্রবেশ করতে শুধুমাত্র অনুমোদিত অ্যাডমিন ইমেইল দিয়ে গুগল লগইন সম্পন্ন করুন।</p>
+                <h2 class="text-xl font-bold text-white">হোয়াটসঅ্যাপ ভেরিফিকেশন</h2>
+                <p class="text-xs text-slate-400">এই প্যানেলে প্রবেশাধিকার শুধুমাত্র অনুমোদিত সুনির্দিষ্ট নম্বরের জন্যই সংরক্ষিত।</p>
             </div>
-            
-            <div class="space-y-3 pt-2">
-                <!-- Google Login Button with Crisp Official SVG Logo -->
-                <button onclick="loginWithGoogle()" class="w-full bg-white hover:bg-slate-100 text-slate-900 font-bold py-3.5 rounded-xl text-xs transition flex items-center justify-center gap-3 shadow-md active:scale-[0.98]">
-                    <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
-                    </svg>
-                    Sign in with Google
-                </button>
+
+            <!-- Login Credentials Input Box -->
+            <div class="space-y-3.5 text-left">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">আপনার হোয়াটসঅ্যাপ নম্বর</label>
+                    <input type="tel" id="adminPhone" placeholder="যেমন: 8801949437370" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-success text-white text-xs font-semibold text-center tracking-widest">
+                </div>
+
+                <!-- OTP Input Area (Hidden initially) -->
+                <div id="otpFormArea" class="hidden space-y-1 transition-all duration-300">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">হোয়াটসঅ্যাপে প্রাপ্ত ওটিপি (OTP)</label>
+                    <input type="text" id="adminOTP" placeholder="৬ ডিজিটের ওটিপি কোড" maxlength="6" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-brand-success text-white text-xs font-bold text-center tracking-[0.5em]">
+                </div>
+
+                <div class="pt-2">
+                    <!-- Dynamic Send OTP / Verify Login button -->
+                    <button id="otpActionBtn" onclick="sendWhatsAppOTP()" class="w-full bg-brand-success hover:bg-emerald-600 text-slate-950 font-extrabold py-3.5 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-md active:scale-[0.98]">
+                        <i class="fa-solid fa-paper-plane"></i> ওটিপি পাঠান (Send OTP)
+                    </button>
+                </div>
             </div>
-            
-            <p id="securityError" class="text-xs text-brand-primary font-bold hidden bg-rose-500/10 border border-rose-500/20 py-2.5 rounded-xl">ভুল ইমেইল! এই ইমেইল দিয়ে প্রবেশ করা সম্পূর্ণ নিষিদ্ধ।</p>
+
+            <p id="securityError" class="text-xs text-brand-primary font-bold hidden bg-rose-500/10 border border-rose-500/20 py-2.5 rounded-xl"></p>
         </div>
     </div>
 
@@ -94,7 +102,7 @@
                 </div>
                 <div>
                     <h1 class="text-sm md:text-lg font-bold text-white leading-snug">ইমারজেন্সি রক্ত লাগবে? - কন্ট্রোল প্যানেল</h1>
-                    <p class="text-[10px] text-slate-400">লগইন ইমেইল: <span id="currentAdminEmail" class="font-semibold text-rose-500">...</span></p>
+                    <p class="text-[10px] text-slate-400">লগইন এডমিন মোবাইল: <span id="currentAdminEmail" class="font-semibold text-emerald-500">...</span></p>
                 </div>
             </div>
 
@@ -103,7 +111,7 @@
                 <button id="themeToggleBtn" class="bg-slate-900 border border-slate-800 hover:border-slate-700 p-2.5 rounded-lg text-xs flex items-center justify-center transition" title="থিম পরিবর্তন">
                     <i id="themeToggleIcon" class="fa-solid fa-sun text-amber-400"></i>
                 </button>
-                
+
                 <!-- Sync Counter Tool -->
                 <button onclick="syncGlobalCounter()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-3 py-2.5 rounded-lg text-[11px] flex items-center gap-1.5 shadow-md transition">
                     <i class="fa-solid fa-rotate"></i> কাউন্টার সিঙ্ক (Sync)
@@ -162,7 +170,7 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 text-xs text-slate-200">
-                
+
                 <div class="space-y-1">
                     <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wide">রক্তের গ্রুপ</label>
                     <select id="filterBlood" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white cursor-pointer">
@@ -244,7 +252,7 @@
                 </h3>
                 <button onclick="closeEditModal()" class="text-white hover:text-white/80 transition p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            
+
             <input type="hidden" id="editDocId">
 
             <div class="p-5 overflow-y-auto space-y-3.5 flex-grow text-xs text-slate-100">
@@ -252,7 +260,7 @@
                     <label class="block font-bold text-slate-400">নাম</label>
                     <input type="text" id="editName" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
                 </div>
-                
+
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-400">মোবাইল নম্বর (ইংরেজিতে)</label>
                     <input type="tel" id="editMobile" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-primary text-white">
@@ -325,10 +333,10 @@
                     <label class="block font-bold text-slate-400">পুরো নাম</label>
                     <input type="text" id="addName" placeholder="যেমন: মো. সাব্বির হোসেন" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white">
                 </div>
-                
+
                 <div class="space-y-1">
                     <label class="block font-bold text-slate-400">মোবাইল নম্বর (ইংরেজিতে ১১ ডিজিট)</label>
-                    <input type="tel" id="addMobile" placeholder="যেমন: 01700000000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white">
+                    <input type="tel" id="addMobile" placeholder="जैसे: 01700000000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 outline-none focus:ring-2 focus:ring-brand-success text-white">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
@@ -415,7 +423,7 @@
         <span id="toastMsg" class="font-medium text-white">অপারেশন সফল হয়েছে!</span>
     </div>
 
-    <!-- Firebase SDK core compat models (Standard CDN Compat for Plain HTML inside Iframe/Browser) -->
+    <!-- Firebase SDK core compat models -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
@@ -450,7 +458,7 @@
                 "ব্রাহ্মণবাড়িয়া": ["ব্রাহ্মণবাড়িয়া সদর", "আশুগঞ্জ", "সরাইল", "নাসিরনগর", "বাঞ্ছারামপুর", "নবীনগর", "কসবা", "আখাউড়া", "বিজয়নগর"],
                 "রাঙ্গামাটি": ["রাঙ্গামাটি সদর", "কাপ্তাই", "কাউখালী", "বাঘাইছড়ি", "লংগদু", "নানিয়ারচর", "রাজস্থলী", "জুরাছড়ি", "বিলাইছড়ি", "বরকল"],
                 "বান্দরবান": ["বান্দরবান সদর", "রুমা", "থানচি", "রোয়াংছড়ি", "লামা", "আলীকদম", "নাইক্ষ্যংছড়ি"],
-                "খাগড়াছড়ি": ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মাটিরাঙ্গা", "মহালছড়ি", "মানিকছড়ি", "রামগড়", "গুইমারা", "লক্ষ্মীছড়ি"]
+                "খাগড়াছড়ি": ["খাগড়াছড়ি সদর", "দীঘিনালা", "পানছড়ি", "মাটিরাঙ্গা", "মহালছড়ি", "মানিকছড়ি", "রামগড়", "গুইমারা", "লক্ষ্মীছড়ি"]
             },
             "রাজশাহী": {
                 "রাজশাহী": ["রাজশাহী সিটি কর্পোরেশন", "পবা", "গোদাগাড়ী", "তানোর", "বাঘা", "চারঘাট", "দুর্গাপুর", "মোহনপুর", "পুঠিয়া", "বাগমারা"],
@@ -508,7 +516,7 @@
 
         const districtMap = {
             "ঢাকা": "dhaka", "গাজীপুর": "gazipur", "নারায়ণগঞ্জ": "narayanganj", "নরসিংদী": "narsingdi", "টাঙ্গাইল": "tangail",
-            "মানিকগঞ্জ": "manikganj", "মুন্সিগঞ্জ": "munshiganj", "ফরিদপুর": "faridpur", "রাজবাড়ী": "rajbari", "গোপালগঞ্জ": "gopalganj",
+            "মানিকগঞ্জ": "manikganj", "মুन्সিগঞ্জ": "munshiganj", "ফরিদপুর": "faridpur", "রাজবাড়ী": "rajbari", "গোপালগঞ্জ": "gopalganj",
             "মাদারীপুর": "madaripur", "শরীয়তপুর": "shariatpur", "কিশোরগঞ্জ": "kishoreganj",
             "চট্টগ্রাম": "chittagong", "কক্সবাজার": "coxsbazar", "কুমিল্লা": "comilla", "ফেনী": "feni", "নোয়াখালী": "noakhali",
             "লক্ষ্মীপুর": "lakshmipur", "চাঁদপুর": "chandpur", "ব্রাহ্মণবাড়িয়া": "brahmanbaria", "রাঙ্গামাটি": "rangamati", "বান্দরবান": "bandarban", "khagrachhari": "khagrachhari",
@@ -524,18 +532,16 @@
         let loadedDonorsList = [];
         let db, auth;
 
-        // 🛡️ AUTHORIZED EMAIL LIST (SECURE ACCESS CONTROL)
-        // এই অ্যারের মধ্যে যে যে ইমেইল আইডিগুলো রাখবে, শুধুমাত্র তারাই লগইন করতে পারবে।
-        // তোমার নিজের ইমেইল আইডিটি অবশ্যই এখানে যুক্ত করবে। (যেমন: "omar@gmail.com")
-        const ALLOWED_ADMINS = [
-            "mdomorfaruk2r@gmail.com", 
-            "info.ghostpost@gmail.com",
-            "muhammedomor.youtube@gmail.com" // প্রয়োজন অনুযায়ী এখানে অন্যান্য জিমেইল যোগ করতে পারো
-        ];
+        // 🛡️ STRICT EXCLUSIVE ADMIN PHONE
+        const ALLOWED_ADMIN_PHONE = "8801949437370"; 
+        const OTP_API_URL = "https://otp-api-hmrz.onrender.com/send-otp";
+
+        // Login System Internal State
+        let generatedOtpCode = null;
+        let isOtpSent = false;
 
         // 🛡️ FIREBASE INITIALIZATION ENGINE
         (function initFirebaseApp() {
-            // Your exact web app's Firebase configuration (provided by Omar)
             const firebaseConfig = {
                 apiKey: "AIzaSyCUlcAtzmJLwZmCCdliL3n9oePKXrUZodc",
                 authDomain: "roktolagbebd.firebaseapp.com",
@@ -558,45 +564,136 @@
             }
         })();
 
-        // 🛡️ GOOGLE AUTHENTICATION CONTROLLER (Popup method with strict domain check)
-        async function loginWithGoogle() {
-            if (!auth) {
-                alert("ফায়ারবেস অথেন্টিকেশন কনফিগারেশন ত্রুটি! দয়া করে কনফিগারেশন যাচাই করুন।");
-                return;
+        // Helper to normalize phone format to 8801XXXXXXXXX
+        function normalizePhoneNumber(phone) {
+            let clean = phone.replace(/[^\d]/g, ''); // Non-digit রিমুভ করা
+            if (clean.startsWith('0') && clean.length === 11) {
+                clean = '88' + clean;
+            } else if (clean.startsWith('1') && clean.length === 10) {
+                clean = '880' + clean;
             }
-            
-            const provider = new firebase.auth.GoogleAuthProvider();
+            return clean;
+        }
+
+        // 🛡️ WHATSAPP OTP DISPATCH CONTROLLER
+        async function sendWhatsAppOTP() {
+            const phoneInput = document.getElementById('adminPhone').value.trim();
             const errorEl = document.getElementById('securityError');
+            const actionBtn = document.getElementById('otpActionBtn');
+            
             errorEl.classList.add('hidden');
 
-            try {
-                const result = await auth.signInWithPopup(provider);
-                const user = result.user;
-                const userEmail = user.email.toLowerCase();
-
-                // Check authorization list
-                const isAuthorized = ALLOWED_ADMINS.some(email => email.toLowerCase() === userEmail);
-
-                if (isAuthorized || ALLOWED_ADMINS.length === 0) {
-                    document.getElementById('currentAdminEmail').textContent = user.email;
-                    document.getElementById('securityGate').classList.add('hidden');
-                    localStorage.setItem('adminAuthorized', 'true');
-                    localStorage.setItem('adminEmail', user.email);
-                    
-                    loadInitialStats();
-                    showToast("গুগল লগইন সফল হয়েছে!", "success");
-                } else {
-                    // Not authorized - Sign out immediately
-                    await auth.signOut();
-                    errorEl.textContent = `অপ্রত্যাশিত প্রবেশাধিকার! ইমেইল (${user.email}) অনুমোদিত এডমিন তালিকায় নেই।`;
-                    errorEl.classList.remove('hidden');
-                    localStorage.removeItem('adminAuthorized');
-                    localStorage.removeItem('adminEmail');
-                }
-            } catch (error) {
-                console.error("Google Auth Error:", error);
-                errorEl.textContent = "লগইন ত্রুটি: " + error.message;
+            if (!phoneInput) {
+                errorEl.textContent = "দয়া করে আপনার হোয়াটসঅ্যাপ নম্বরটি লিখুন!";
                 errorEl.classList.remove('hidden');
+                return;
+            }
+
+            const normalizedPhone = normalizePhoneNumber(phoneInput);
+
+            // Strict Validation check before sending any API requests
+            if (normalizedPhone !== ALLOWED_ADMIN_PHONE) {
+                errorEl.textContent = "ভুল নম্বর! এই কন্ট্রোল প্যানেলে এই নম্বর দিয়ে প্রবেশ করা সম্পূর্ণ নিষিদ্ধ।";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            // If OTP is already sent, switch logic to Verify Phase
+            if (isOtpSent) {
+                verifyWhatsAppOTPAndLogin();
+                return;
+            }
+
+            // Generate 6 digit random secure OTP code
+            generatedOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            // Set button loading state
+            actionBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> ওটিপি পাঠানো হচ্ছে...`;
+            actionBtn.disabled = true;
+
+            try {
+                const response = await fetch(OTP_API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        phoneNumber: normalizedPhone,
+                        otpCode: generatedOtpCode
+                    })
+                });
+
+                const resData = await response.json();
+
+                if (response.ok) {
+                    isOtpSent = true;
+                    // Show OTP input field
+                    document.getElementById('otpFormArea').classList.remove('hidden');
+                    // Change login flow visual button
+                    actionBtn.innerHTML = `<i class="fa-solid fa-key"></i> কোড যাচাই ও লগইন`;
+                    actionBtn.className = "w-full bg-brand-primary hover:bg-rose-700 text-white font-extrabold py-3.5 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-md active:scale-[0.98]";
+                    actionBtn.disabled = false;
+
+                    showToast("আপনার হোয়াটসঅ্যাপে ৬ ডিজিটের ওটিপি পাঠানো হয়েছে!", "success");
+                } else {
+                    throw new Error(resData.message || "এপিআই রেসপন্স ত্রুটিপূর্ণ।");
+                }
+
+            } catch (error) {
+                console.error("OTP API Dispatch Error:", error);
+                errorEl.textContent = "ওটিপি সার্ভারে সংযোগ ব্যর্থ! ত্রুটি: " + error.message;
+                errorEl.classList.remove('hidden');
+                actionBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> ওটিপি পাঠান (Send OTP)`;
+                actionBtn.disabled = false;
+            }
+        }
+
+        // 🛡️ VERIFY OTP CODE AND FIREBASE AUTH SIGN-IN
+        async function verifyWhatsAppOTPAndLogin() {
+            const enteredOtp = document.getElementById('adminOTP').value.trim();
+            const errorEl = document.getElementById('securityError');
+            const actionBtn = document.getElementById('otpActionBtn');
+
+            errorEl.classList.add('hidden');
+
+            if (!enteredOtp || enteredOtp.length !== 6) {
+                errorEl.textContent = "দয়া করে সঠিক ৬ ডিজিটের ওটিপি কোডটি লিখুন!";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (enteredOtp !== generatedOtpCode) {
+                errorEl.textContent = "ভুল ওটিপি কোড! অনুগ্রহ করে আপনার হোয়াটসঅ্যাপ চেক করে আবার চেষ্টা করুন।";
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            // OTP verified successfully! Prepare Firebase integration
+            actionBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> সেশন সুরক্ষিত করা হচ্ছে...`;
+            actionBtn.disabled = true;
+
+            try {
+                // Sign in anonymously to enable firestore queries matching security rules
+                if (auth) {
+                    await auth.signInAnonymously();
+                }
+
+                // Setup secure active session tokens in local storage
+                localStorage.setItem('adminAuthorized', 'true');
+                localStorage.setItem('adminEmail', '8801949437370');
+
+                document.getElementById('currentAdminEmail').textContent = "8801949437370";
+                document.getElementById('securityGate').classList.add('hidden');
+
+                loadInitialStats();
+                showToast("লগইন সফল হয়েছে! অ্যাডমিন প্যানেলে স্বাগতম।", "success");
+
+            } catch (authError) {
+                console.error("Firebase Auth Sign-In Error:", authError);
+                errorEl.textContent = "ডাটাবেজ অথেন্টিকেশন ব্যর্থ হয়েছে: " + authError.message;
+                errorEl.classList.remove('hidden');
+                actionBtn.innerHTML = `<i class="fa-solid fa-key"></i> কোড যাচাই ও লগইন`;
+                actionBtn.disabled = false;
             }
         }
 
@@ -616,12 +713,21 @@
         }
 
         // Automatic persistent state verification
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             if (localStorage.getItem('adminAuthorized') === 'true') {
                 document.getElementById('securityGate').classList.add('hidden');
                 const savedEmail = localStorage.getItem('adminEmail') || 'অনুমোদিত অ্যাডমিন';
                 document.getElementById('currentAdminEmail').textContent = savedEmail;
-                loadInitialStats();
+                
+                // Pre-warm anonymous firebase session so queries won't throw permission errors
+                try {
+                    if (auth) {
+                        await auth.signInAnonymously();
+                    }
+                    loadInitialStats();
+                } catch (err) {
+                    console.error("Persistence auth error:", err);
+                }
             }
         });
 
@@ -839,16 +945,16 @@
                 snapshot.forEach(doc => {
                     const id = doc.id;
                     const donor = doc.data();
-                    
+
                     // Push to backup list
                     loadedDonorsList.push({ id, ...donor });
 
                     const card = document.createElement('div');
                     card.className = "admin-card p-4 rounded-2xl shadow-sm border border-slate-800 flex flex-col justify-between gap-3 text-xs";
-                    
+
                     // Quick Action status check
                     const statusColor = donor.status === 'Verified' ? 'text-emerald-500 border-emerald-500/20 bg-emerald-500/5' : 'text-amber-500 border-amber-500/20 bg-amber-500/5';
-                    
+
                     card.innerHTML = `
                         <div class="space-y-1.5 min-w-0">
                             <div class="flex items-center justify-between gap-2 border-b border-slate-800 pb-1.5 flex-wrap">
@@ -926,10 +1032,10 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(loadedDonorsList, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            
+
             const timestamp = new Date().toISOString().split('T')[0];
             downloadAnchor.setAttribute("download", `donors_backup_${timestamp}.json`);
-            
+
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -940,7 +1046,7 @@
         async function syncGlobalCounter() {
             if (!db) return;
             if (!confirm("আপনি কি সম্পূর্ণ ডাটাবেজ কাউন্ট করে মেইন সাইটের কাউন্টার সিঙ্ক (Sync) করতে চান?")) return;
-            
+
             const syncBtn = document.querySelector("button[onclick='syncGlobalCounter()']");
             syncBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> সিঙ্ক হচ্ছে...`;
             syncBtn.disabled = true;
@@ -981,6 +1087,7 @@
             document.getElementById('editModal').classList.remove('hidden');
         }
 
+        // Close Edit Modal
         function closeEditModal() {
             document.getElementById('editModal').classList.add('hidden');
         }
